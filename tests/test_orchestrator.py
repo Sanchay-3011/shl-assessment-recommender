@@ -209,6 +209,11 @@ def test_validator_fallback_on_hallucination(test_orchestrator) -> None:
                         name="Fake Assessment Name",
                         url="https://www.shl.com/fake",
                         test_type="K"
+                    ),
+                    RecommendationItem(
+                        name="Python Aptitude Test",
+                        url="https://www.shl.com/python-aptitude",
+                        test_type="A"
                     )
                 ],
                 end_of_conversation=True
@@ -218,5 +223,6 @@ def test_validator_fallback_on_hallucination(test_orchestrator) -> None:
     messages = [ChatMessage(role="user", content="I need a Python developer test for entry-level, aptitude")]
     response = test_orchestrator.chat(messages)
     
-    # Validator should drop hallucinated items instead of failing entirely
-    assert response.recommendations == []
+    # Validator should drop the hallucinated item but keep the valid one
+    assert len(response.recommendations) == 1
+    assert response.recommendations[0].name == "Python Aptitude Test"
