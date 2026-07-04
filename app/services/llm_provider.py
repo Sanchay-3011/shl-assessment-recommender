@@ -119,7 +119,7 @@ class OpenRouterProvider(BaseLLMProvider):
 
     def __init__(self) -> None:
         self.api_key = os.getenv("OPENROUTER_API_KEY")
-        self.model_name = os.getenv("OPENROUTER_MODEL", "deepseek/deepseek-v4-flash")
+        self.model_name = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash")
         
         # Initialize client if API key is present
         self.client = None

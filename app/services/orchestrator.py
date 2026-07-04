@@ -394,6 +394,9 @@ class AgentOrchestrator:
                     )
                 )
             response.recommendations = grounded_recs
+            fallback_msg = self.response_validator.get_fallback_response().reply
+            if response.reply == fallback_msg or "I encountered an issue verifying" in response.reply:
+                response.reply = "Here are the recommended assessments from the SHL catalog matching your requirements:"
             validation_result = "SHORTLIST_GROUNDED"
 
         total_latency = time.perf_counter() - start_time
