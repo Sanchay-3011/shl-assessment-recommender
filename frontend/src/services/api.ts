@@ -1,8 +1,14 @@
 import axios, { AxiosError } from 'axios';
 import type { ChatMessage, ChatResponse } from '../types';
 
+const isLocalhost = typeof window !== 'undefined' && Boolean(
+  window.location.hostname === 'localhost' ||
+    window.location.hostname === '[::1]' ||
+    window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
+);
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://shl-assessment-recommender-production-6f8d.up.railway.app' : 'http://localhost:8000'),
+  baseURL: import.meta.env.VITE_API_URL || (!isLocalhost ? 'https://shl-assessment-recommender-production-6f8d.up.railway.app' : 'http://localhost:8000'),
   timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
