@@ -161,23 +161,44 @@ class AgentOrchestrator:
             if not lookup_name:
                 lookup_name = context.retrieval_query.query_text if context.retrieval_query else ""
             
+            # Clean lookup name by removing common question trigger phrases
+            lookup_name_clean = lookup_name.strip().lower()
+            prefixes_to_strip = [
+                "tell me about the", "tell me about", "what is the duration of", "what is the format of", 
+                "what is the", "what is", "what does the", "what does", "describe the", "describe", 
+                "details on the", "details on", "details about the", "details about", "duration of the", 
+                "duration of", "format of the", "format of", "how long is the", "how long is", "info on the", 
+                "info on", "information about the", "information about", "more about the", "more about", 
+                "assessment", "test", "report"
+            ]
+            for prefix in prefixes_to_strip:
+                if lookup_name_clean.startswith(prefix):
+                    lookup_name_clean = lookup_name_clean[len(prefix):].strip()
+                if lookup_name_clean.endswith(prefix):
+                    lookup_name_clean = lookup_name_clean[:-len(prefix)].strip()
+            
+            # Remove enclosing quotes if any survived
+            lookup_name_clean = lookup_name_clean.strip("'\"“”‘’")
+            
             catalog_map = {item.get("name", "").strip().lower(): item for item in self.catalog}
             catalog_names_lower = list(catalog_map.keys())
             
-            # 1. Exact match
-            found_item = catalog_map.get(lookup_name.strip().lower())
+            # 1. Exact match on cleaned name
+            found_item = catalog_map.get(lookup_name_clean)
             
-            # 2. Fuzzy match (strict cutoff to avoid false positives)
+            # 2. Fuzzy match on cleaned name (strict cutoff to avoid false positives)
             if not found_item:
-                closest = difflib.get_close_matches(lookup_name.strip().lower(), catalog_names_lower, n=1, cutoff=0.75)
+                closest = difflib.get_close_matches(lookup_name_clean, catalog_names_lower, n=1, cutoff=0.75)
                 if closest:
                     found_item = catalog_map[closest[0]]
             
-            # 3. Substring match as last resort
+            # 3. Substring match (bidirectional: query in catalog name OR catalog name in query)
+            # Prioritize longer catalog names first to match 'Python (New)' instead of 'Python'
             if not found_item:
-                for k, v in catalog_map.items():
-                    if lookup_name.strip().lower() in k:
-                        found_item = v
+                sorted_catalog_names = sorted(catalog_names_lower, key=len, reverse=True)
+                for k in sorted_catalog_names:
+                    if k in lookup_name_clean or lookup_name_clean in k:
+                        found_item = catalog_map[k]
                         break
             
             if found_item:

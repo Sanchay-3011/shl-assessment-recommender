@@ -199,10 +199,10 @@ class ConversationEngine:
             "duration of", "format of", "how long is", "what does", "describe the",
             "info on", "information about", "more about", "what is"
         ]
-        # Extract quoted or titled assessment name if present
+        # Extract quoted or titled assessment name if present (supports single, double, and smart quotes)
         _lookup_assessment_name = None
         import re as _re
-        _quoted_match = _re.search(r'["\u201c\u201d]([^"\u201c\u201d]+)["\u201c\u201d]', last_user_msg.content if last_user_msg else "")
+        _quoted_match = _re.search(r'["\'\u201c\u201d\u2018\u2019]([^"\'\u201c\u201d\u2018\u2019]+)["\'\u201c\u201d\u2018\u2019]', last_user_msg.content if last_user_msg else "")
         if _quoted_match:
             _lookup_assessment_name = _quoted_match.group(1).strip()
         _is_lookup = (
