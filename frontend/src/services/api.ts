@@ -1,14 +1,29 @@
 import axios, { AxiosError } from 'axios';
 import type { ChatMessage, ChatResponse } from '../types';
 
-const isLocalhost = typeof window !== 'undefined' && Boolean(
-  window.location.hostname === 'localhost' ||
-    window.location.hostname === '[::1]' ||
-    window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
-);
+const getBaseURL = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  
+  const isLocal = typeof window !== 'undefined' && Boolean(
+    window.location.hostname === 'localhost' ||
+      window.location.hostname === '[::1]' ||
+      window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
+  );
+
+  // If we are in the browser on a deployed site, never allow localhost fallback or relative url
+  if (!isLocal) {
+    if (envUrl && envUrl.startsWith('http') && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
+      return envUrl;
+    }
+    return 'https://shl-assessment-recommender-production-6f8d.up.railway.app';
+  }
+
+  // If local, respect VITE_API_URL or fallback to localhost
+  return envUrl && envUrl !== 'undefined' && envUrl !== 'null' ? envUrl : 'http://localhost:8000';
+};
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || (!isLocalhost ? 'https://shl-assessment-recommender-production-6f8d.up.railway.app' : 'http://localhost:8000'),
+  baseURL: getBaseURL(),
   timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
