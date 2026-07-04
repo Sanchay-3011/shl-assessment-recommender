@@ -168,15 +168,18 @@ export const useChat = () => {
 
   // Initial startup health check
   useEffect(() => {
+    let mounted = true;
     const runStartupCheck = async () => {
       setConnectionStatus('connecting');
       const isHealthy = await verifyHealthStatus();
-      if (!isHealthy) {
+      if (!isHealthy && mounted) {
         triggerReconnectionTimer();
       }
     };
     runStartupCheck();
-  }, [verifyHealthStatus, triggerReconnectionTimer]);
+    return () => { mounted = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Sync state with browser network drop listeners
   useEffect(() => {
@@ -204,7 +207,8 @@ export const useChat = () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [verifyHealthStatus, triggerReconnectionTimer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Manual Trigger to refresh connection status immediately
   const forceCheckConnection = async () => {

@@ -40,6 +40,7 @@ if not allowed_origins:
         "http://127.0.0.1:5173",
         "http://localhost:3000",
         "http://localhost:8000",
+        "https://shl-assessment-recommender-alpha.vercel.app",
     ]
 
 allow_all_origins = "*" in allowed_origins or (len(allowed_origins) == 1 and allowed_origins[0] == "*")

@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import type { ChatMessage, ChatResponse } from '../types';
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://shl-assessment-recommender-production-6f8d.up.railway.app' : 'http://localhost:8000'),
   timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
