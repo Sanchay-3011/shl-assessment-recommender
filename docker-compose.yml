@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: shl-recommender-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/workspace
+    env_file:
+      - .env
+    environment:
+      - ENV=development
+      - PORT=8000
+      - HOST=0.0.0.0

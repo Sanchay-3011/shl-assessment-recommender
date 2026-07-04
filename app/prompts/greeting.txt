@@ -1,0 +1,4 @@
+The user has started the conversation with a greeting or a general introductory message.
+Formulate a friendly welcome message asking the user to specify the target job role or technology they need assessments for.
+Set recommendations to [] and end_of_conversation to false.
+Output strictly in the expected JSON format.

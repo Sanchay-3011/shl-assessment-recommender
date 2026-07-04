@@ -1,0 +1,8 @@
+The user wants to compare multiple assessments.
+Refer to the context 'comparison_targets' list for the assessments to compare.
+If the GROUNDED SEARCH SHORTLIST is provided, use those grounded catalog records for the comparison instead of performing new retrieval.
+Formulate a conversational reply explaining the concrete differences between the target assessments using catalog descriptions, test types, duration, and key features.
+Do not recommend assessments in the 'recommendations' array. Keep it empty [].
+Set end_of_conversation to false — the user may want to ask follow-up questions after the comparison.
+Speak as an expert assessment consultant: be specific, reference actual catalog data, and explain practical differences for the recruiter's use case.
+Output strictly in the expected JSON format.

@@ -1,0 +1,312 @@
+{
+  "total_scenarios": 9,
+  "successful_scenarios": 9,
+  "overall_success_rate": 1.0,
+  "conversation_accuracy": {
+    "intent_accuracy": 1.0,
+    "policy_accuracy": 1.0
+  },
+  "retrieval_quality": {
+    "recall_at_10": 0.8888888888888888,
+    "precision_at_5": 0.0,
+    "mrr": 0.8888888888888888
+  },
+  "grounding_quality": {
+    "hallucination_rate": 0.0,
+    "invalid_url_rate": 0.0,
+    "grounding_success_rate": 1.0
+  },
+  "response_completeness": 1.0,
+  "latency": {
+    "average_total_latency_sec": 0.6616956221922818
+  },
+  "traces": [
+    {
+      "id": "scenario_greeting",
+      "scenario": "greeting",
+      "latency": 0.20353589998558164,
+      "status_code": 200,
+      "success": true,
+      "intent": {
+        "expected": "greeting",
+        "predicted": "greeting"
+      },
+      "policy": {
+        "expected": "GREETING",
+        "predicted": "GREETING"
+      },
+      "retrieval": {
+        "candidates": [],
+        "expected": [],
+        "recall_at_10": 1.0,
+        "precision_at_5": 0.0,
+        "mrr": 1.0
+      },
+      "grounding": {
+        "hallucination_rate": 0.0,
+        "invalid_url_rate": 0.0,
+        "grounding_success_rate": 1.0
+      },
+      "completeness": 1.0
+    },
+    {
+      "id": "scenario_recommendation_python",
+      "scenario": "recommendation",
+      "latency": 5.6277233000146225,
+      "status_code": 200,
+      "success": true,
+      "intent": {
+        "expected": "recommend",
+        "predicted": "recommend"
+      },
+      "policy": {
+        "expected": "END_CONVERSATION",
+        "predicted": "END_CONVERSATION"
+      },
+      "retrieval": {
+        "candidates": [
+          "Java 2 Platform Enterprise Edition 1.4 Fundamental",
+          "Typing (New)",
+          "SHL Verify Interactive Numerical Calculation",
+          "Entry Level Cashier Solution",
+          "Entry Level Sales Solution",
+          "Data Entry (New)",
+          "Entry Level Technical Support Solution",
+          "Geoinformatics Engineering (New)",
+          "What Is The Value - US",
+          "Count Out The Money"
+        ],
+        "expected": [
+          "Python Aptitude Test"
+        ],
+        "recall_at_10": 0.0,
+        "precision_at_5": 0.0,
+        "mrr": 0.0
+      },
+      "grounding": {
+        "hallucination_rate": 0.0,
+        "invalid_url_rate": 0.0,
+        "grounding_success_rate": 1.0
+      },
+      "completeness": 1.0
+    },
+    {
+      "id": "scenario_clarification_leadership",
+      "scenario": "clarification",
+      "latency": 0.03284080000594258,
+      "status_code": 200,
+      "success": true,
+      "intent": {
+        "expected": "recommend",
+        "predicted": "recommend"
+      },
+      "policy": {
+        "expected": "END_CONVERSATION",
+        "predicted": "END_CONVERSATION"
+      },
+      "retrieval": {
+        "candidates": [
+          "Digital Readiness Development Report - Manager",
+          "Manufacturing & Industrial - Vigilance Focus 8.0",
+          "RemoteWorkQ Manager Report",
+          "Time Management (U.S.)",
+          "ITIL (IT Infrastructure Library) (New)",
+          "Manufac. & Indust. - Mechanical & Vigilance 8.0",
+          "Operations Management (New)",
+          "Manufacturing & Industrial - Mechanical Focus 8.0",
+          "Manufacturing & Industrial - Essential Focus 8.0",
+          "Digital Readiness Development Report - IC"
+        ],
+        "expected": [],
+        "recall_at_10": 1.0,
+        "precision_at_5": 0.0,
+        "mrr": 1.0
+      },
+      "grounding": {
+        "hallucination_rate": 0.0,
+        "invalid_url_rate": 0.0,
+        "grounding_success_rate": 1.0
+      },
+      "completeness": 1.0
+    },
+    {
+      "id": "scenario_refinement_leadership",
+      "scenario": "refinement",
+      "latency": 0.0362009999807924,
+      "status_code": 200,
+      "success": true,
+      "intent": {
+        "expected": "recommend",
+        "predicted": "recommend"
+      },
+      "policy": {
+        "expected": "END_CONVERSATION",
+        "predicted": "END_CONVERSATION"
+      },
+      "retrieval": {
+        "candidates": [
+          "360 Digital Report",
+          "Virtual Assessment and Development Centers",
+          "Executive Scenarios Narrative Report",
+          "OPQ UCF Development Action Planner Report 2.0",
+          "Executive Scenarios Profile Report",
+          "Executive Scenarios",
+          "OPQ Emotional Intelligence Report",
+          "OPQ Maximising your Learning Report",
+          "Universal Competency Framework Job profiling guide",
+          "OPQ Leadership Report"
+        ],
+        "expected": [],
+        "recall_at_10": 1.0,
+        "precision_at_5": 0.0,
+        "mrr": 1.0
+      },
+      "grounding": {
+        "hallucination_rate": 0.0,
+        "invalid_url_rate": 0.0,
+        "grounding_success_rate": 1.0
+      },
+      "completeness": 1.0
+    },
+    {
+      "id": "scenario_comparison_opq",
+      "scenario": "comparison",
+      "latency": 0.007392199942842126,
+      "status_code": 200,
+      "success": true,
+      "intent": {
+        "expected": "compare",
+        "predicted": "compare"
+      },
+      "policy": {
+        "expected": "COMPARISON",
+        "predicted": "COMPARISON"
+      },
+      "retrieval": {
+        "candidates": [],
+        "expected": [],
+        "recall_at_10": 1.0,
+        "precision_at_5": 0.0,
+        "mrr": 1.0
+      },
+      "grounding": {
+        "hallucination_rate": 0.0,
+        "invalid_url_rate": 0.0,
+        "grounding_success_rate": 1.0
+      },
+      "completeness": 1.0
+    },
+    {
+      "id": "scenario_prompt_injection",
+      "scenario": "prompt_injection",
+      "latency": 0.004272899939678609,
+      "status_code": 200,
+      "success": true,
+      "intent": {
+        "expected": "prompt_injection",
+        "predicted": "prompt_injection"
+      },
+      "policy": {
+        "expected": "PROMPT_INJECTION",
+        "predicted": "PROMPT_INJECTION"
+      },
+      "retrieval": {
+        "candidates": [],
+        "expected": [],
+        "recall_at_10": 1.0,
+        "precision_at_5": 0.0,
+        "mrr": 1.0
+      },
+      "grounding": {
+        "hallucination_rate": 0.0,
+        "invalid_url_rate": 0.0,
+        "grounding_success_rate": 1.0
+      },
+      "completeness": 1.0
+    },
+    {
+      "id": "scenario_out_of_scope",
+      "scenario": "out_of_scope",
+      "latency": 0.004637799924239516,
+      "status_code": 200,
+      "success": true,
+      "intent": {
+        "expected": "out_of_scope",
+        "predicted": "out_of_scope"
+      },
+      "policy": {
+        "expected": "REFUSAL",
+        "predicted": "REFUSAL"
+      },
+      "retrieval": {
+        "candidates": [],
+        "expected": [],
+        "recall_at_10": 1.0,
+        "precision_at_5": 0.0,
+        "mrr": 1.0
+      },
+      "grounding": {
+        "hallucination_rate": 0.0,
+        "invalid_url_rate": 0.0,
+        "grounding_success_rate": 1.0
+      },
+      "completeness": 1.0
+    },
+    {
+      "id": "scenario_empty_retrieval",
+      "scenario": "empty_retrieval",
+      "latency": 0.03380829992238432,
+      "status_code": 200,
+      "success": true,
+      "intent": {
+        "expected": "recommend",
+        "predicted": "recommend"
+      },
+      "policy": {
+        "expected": "CLARIFICATION",
+        "predicted": "CLARIFICATION"
+      },
+      "retrieval": {
+        "candidates": [],
+        "expected": [],
+        "recall_at_10": 1.0,
+        "precision_at_5": 0.0,
+        "mrr": 1.0
+      },
+      "grounding": {
+        "hallucination_rate": 0.0,
+        "invalid_url_rate": 0.0,
+        "grounding_success_rate": 1.0
+      },
+      "completeness": 1.0
+    },
+    {
+      "id": "scenario_contradictory_requirements",
+      "scenario": "contradictory_requirements",
+      "latency": 0.004848400014452636,
+      "status_code": 200,
+      "success": true,
+      "intent": {
+        "expected": "recommend",
+        "predicted": "recommend"
+      },
+      "policy": {
+        "expected": "CLARIFICATION",
+        "predicted": "CLARIFICATION"
+      },
+      "retrieval": {
+        "candidates": [],
+        "expected": [],
+        "recall_at_10": 1.0,
+        "precision_at_5": 0.0,
+        "mrr": 1.0
+      },
+      "grounding": {
+        "hallucination_rate": 0.0,
+        "invalid_url_rate": 0.0,
+        "grounding_success_rate": 1.0
+      },
+      "completeness": 1.0
+    }
+  ]
+}

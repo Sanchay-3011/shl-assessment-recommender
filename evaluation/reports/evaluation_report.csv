@@ -1,0 +1,21 @@
+Metric,Value
+Total Scenarios,50
+Successful Scenarios,50
+Overall End-to-End Success Rate,100.00%
+Intent Accuracy,100.00%
+Policy Accuracy,100.00%
+Clarification Accuracy,100.00%
+Comparison Accuracy,100.00%
+Refinement Accuracy,100.00%
+Recall@10,53.33%
+Precision@5,10.67%
+MRR,0.3822
+Hallucination Rate,0.00%
+Invalid URL Rate,0.00%
+Grounding Success Rate,100.00%
+Response Completeness,100.00%
+Recommendation Coverage,86.00%
+Average Latency,0.1438s
+P50 Latency,0.0052s
+P95 Latency,0.0441s
+Max Latency,6.2024s
