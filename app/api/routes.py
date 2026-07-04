@@ -50,3 +50,13 @@ async def chat(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred while processing the conversation history."
         )
+
+@router.get(
+    "/chat",
+    status_code=status.HTTP_200_OK,
+    summary="Chat API Status check",
+    description="Provides status check endpoint reachable via GET."
+)
+def chat_status_check():
+    """Returns endpoint info to ensure it is reachable via GET requests."""
+    return {"status": "active", "message": "The chat endpoint is active and expects POST requests."}
