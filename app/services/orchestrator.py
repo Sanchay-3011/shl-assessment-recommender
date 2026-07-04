@@ -145,12 +145,23 @@ class AgentOrchestrator:
                 # 2. Standard catalog lookup for named targets
                 for target in context.comparison_targets:
                     target_lower = target.lower()
+                    found_target = None
+                    # Pass 1: Match the assessment name (exact or substring)
                     for item in self.catalog:
                         name_str = item.get("name", "")
-                        desc_str = item.get("description", "")
-                        if target_lower in name_str.lower() or f"({target_lower})" in desc_str.lower() or f" {target_lower} " in desc_str.lower():
-                            resolved.append(name_str)
+                        if target_lower in name_str.lower():
+                            found_target = name_str
                             break
+                    # Pass 2: Fall back to description match if no name matches
+                    if not found_target:
+                        for item in self.catalog:
+                            name_str = item.get("name", "")
+                            desc_str = item.get("description", "")
+                            if f"({target_lower})" in desc_str.lower() or f" {target_lower} " in desc_str.lower():
+                                found_target = name_str
+                                break
+                    if found_target:
+                        resolved.append(found_target)
             if resolved:
                 context.comparison_targets = list(set(resolved))
 

@@ -216,12 +216,12 @@ class ConversationEngine:
         
         if any(last_text.startswith(gw) for gw in greeting_words) and len(messages) <= 2 and not current_constraints.role:
             current_intent = "greeting"
-        # Detect lookup intent BEFORE compare/recommend to avoid misrouting
-        elif _is_lookup:
-            current_intent = "lookup"
-        # Determine comparison
+        # Determine comparison (checked before lookup to prevent "what is the difference..." from matching "what is the")
         elif any(kw in last_text for kw in ["compare", "difference between", "versus", "vs"]):
             current_intent = "compare"
+        # Detect lookup intent
+        elif _is_lookup:
+            current_intent = "lookup"
         # Determine refinement: if explicit keywords are present, OR if previous turns already extracted a role/tech/skill
         elif (
             any(kw in last_text for kw in ["actually", "instead of", "change", "filter by", "add personality", "exclude"]) or
@@ -607,7 +607,6 @@ class ConversationEngine:
         (__ORDINAL_1__, __ORDINAL_2__) for relative comparisons.
         """
         text_lower = text.lower()
-        targets = []
 
         # 1. Detect ordinal references: "first two", "first and second", "#1 and #2",
         #    "recommendation 1 and 2", "compare the first", "compare #1"
@@ -623,10 +622,61 @@ class ConversationEngine:
             if re.search(pattern, text_lower):
                 return sentinels
 
-        # 2. Standard extraction of uppercase or vocabulary words (e.g. OPQ, GSA, Python, Java)
+        # 2. Extract quoted text (single, double, or smart quotes)
+        quoted_targets = re.findall(r'["\'\u201c\u201d\u2018\u2019]([^"\'\u201c\u201d\u2018\u2019]+)["\'\u201c\u201d\u2018\u2019]', text)
+        if quoted_targets:
+            return [t.strip() for t in quoted_targets if t.strip()]
+
+        # 3. Extract segments based on splitters like "between ... and ...", "... vs ...", "... versus ..."
+        segments = []
+        if "between" in text_lower and "and" in text_lower:
+            parts = re.split(r'\bbetween\b|\band\b', text, flags=re.IGNORECASE)
+            if len(parts) >= 3:
+                segments.append(parts[1])
+                segments.append(parts[2])
+        elif " vs " in text_lower:
+            parts = re.split(r'\bvs\b', text, flags=re.IGNORECASE)
+            if len(parts) >= 2:
+                segments.append(parts[0])
+                segments.append(parts[1])
+        elif " versus " in text_lower:
+            parts = re.split(r'\bversus\b', text, flags=re.IGNORECASE)
+            if len(parts) >= 2:
+                segments.append(parts[0])
+                segments.append(parts[1])
+        elif "compare" in text_lower and "and" in text_lower:
+            parts = re.split(r'\bcompare\b|\band\b', text, flags=re.IGNORECASE)
+            if len(parts) >= 3:
+                segments.append(parts[1])
+                segments.append(parts[2])
+
+        # Clean segments (strip leading/trailing punctuation, common starting words like "the", "a", "an")
+        cleaned_targets = []
+        for seg in segments:
+            seg_clean = seg.strip().strip("?.,!;:")
+            # Strip leading "the", "a", "an"
+            words = seg_clean.split()
+            if words and words[0].lower() in ["the", "a", "an"]:
+                seg_clean = " ".join(words[1:])
+            if seg_clean:
+                cleaned_targets.append(seg_clean)
+
+        if len(cleaned_targets) >= 2:
+            return cleaned_targets
+
+        # 4. Fallback to standard extraction of uppercase or vocabulary words (e.g. OPQ, GSA, Python, Java)
+        # Filters out common stopwords to avoid false-matching common English terms
+        stopwords = {
+            "what", "is", "the", "difference", "between", "and", "or", "compare", "versus", "vs", "a", "an", "to", 
+            "for", "in", "of", "on", "with", "assessment", "assessments", "test", "tests", "report", "reports", "solution",
+            "solutions", "new", "about", "describe", "detail", "details", "info", "information", "more", "first", "second"
+        }
+        targets = []
         words = re.findall(r'\b[A-Za-z0-9+#.-]+\b', text)
         for w in words:
             w_norm = w.lower()
+            if w_norm in stopwords:
+                continue
             if w_norm in self.vocabulary or (w.isupper() and len(w) >= 3):
                 targets.append(w)
         return list(set(targets))
