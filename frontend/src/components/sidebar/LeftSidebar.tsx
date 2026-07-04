@@ -1,5 +1,5 @@
 import React from 'react';
-import { PlusCircle, MessageSquare, Compass, Info, Briefcase } from 'lucide-react';
+import { PlusCircle, Compass, Info, Briefcase } from 'lucide-react';
 
 interface LeftSidebarProps {
   onSelectPrompt: (prompt: string) => void;
@@ -13,12 +13,6 @@ const EXAMPLE_PROMPTS = [
   'Sales Executive Screening',
   'Customer Support Simulation',
   'Compare OPQ and Verify tests'
-];
-
-const MOCK_HISTORY = [
-  { id: '1', title: 'Python Junior Developer' },
-  { id: '2', title: 'Sales Force Coordinator' },
-  { id: '3', title: 'Director of HR Candidates' }
 ];
 
 export const LeftSidebar: React.FC<LeftSidebarProps> = ({
@@ -66,25 +60,6 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               >
                 {prompt}
               </button>
-            ))}
-          </div>
-        </div>
-
-        {/* History Log */}
-        <div>
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center space-x-2">
-            <MessageSquare className="w-3.5 h-3.5" />
-            <span>Search History</span>
-          </h3>
-          <div className="space-y-1">
-            {MOCK_HISTORY.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center space-x-3 text-sm text-slate-500 hover:text-slate-900 py-2.5 px-3 rounded-lg cursor-pointer hover:bg-slate-50/50 group"
-              >
-                <MessageSquare className="w-4 h-4 text-slate-400 group-hover:text-blue-500 shrink-0" />
-                <span className="truncate">{item.title}</span>
-              </div>
             ))}
           </div>
         </div>
