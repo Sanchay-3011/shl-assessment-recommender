@@ -108,10 +108,12 @@ class AgentOrchestrator:
             pipeline_trace.append({"stage": stage, "status": "FAILURE", "elapsed": elapsed, "error": str(e)})
             return self.response_validator.get_fallback_response()
 
-        # Resolve comparison targets to full catalog names for grounding
+        shortlist = []
+
+        # 2. COMPARISON policy: identify specific target names in history
         if policy == "COMPARISON":
             resolved = []
-            # 1. Handle ordinal references (e.g. "compare the first two")
+            # Parse ordinal targets first if any (__ORDINAL_1__, etc.)
             ordinal_targets = [t for t in context.comparison_targets if t.startswith("__ORDINAL_")]
             if ordinal_targets:
                 ordinal_indices = []
@@ -164,6 +166,19 @@ class AgentOrchestrator:
                         resolved.append(found_target)
             if resolved:
                 context.comparison_targets = list(set(resolved))
+                # Pre-populate shortlist with ScoredDocument objects for the resolved comparison targets
+                from app.models.schemas import ScoredDocument, PreprocessedDocument
+                for name in context.comparison_targets:
+                    for item in self.catalog:
+                        if item.get("name") == name:
+                            shortlist.append(
+                                ScoredDocument(
+                                    document=PreprocessedDocument(**item),
+                                    score=1.0,
+                                    reasoning="User-selected comparison target"
+                                )
+                            )
+                            break
 
         # LOOKUP policy: direct catalog search, NO LLM needed — zero hallucination risk
         if policy == "LOOKUP":
@@ -299,7 +314,8 @@ class AgentOrchestrator:
         # 4. RecommendationSelector
         stage = "RecommendationSelector"
         did_retrieval = policy in ("RECOMMENDATION", "REFINE", "END_CONVERSATION") and context.retrieval_query is not None
-        shortlist = []
+        if not shortlist:
+            shortlist = []
         if candidates:
             t0 = time.perf_counter()
             try:
@@ -429,6 +445,39 @@ class AgentOrchestrator:
             fallback_msg = self.response_validator.get_fallback_response().reply
             if response.reply == fallback_msg or "I encountered an issue verifying" in response.reply:
                 response.reply = "Here are the recommended assessments from the SHL catalog matching your requirements:"
+            validation_result = "SHORTLIST_GROUNDED"
+
+        # Deterministic comparison fallback: if LLM fails but we have a shortlist to compare
+        if (
+            policy == "COMPARISON"
+            and (len(response.recommendations) == 0 or "I encountered an issue verifying" in response.reply or response.reply == self.response_validator.get_fallback_response().reply)
+            and shortlist
+        ):
+            logger.warning("LLM comparison response failed. Generating deterministic comparison table fallback.")
+            table_rows = []
+            for item in shortlist:
+                doc = item.document
+                name = doc.name
+                duration = doc.duration or "Not specified"
+                remote = "Yes" if str(doc.remote).lower() == "yes" else "No"
+                adaptive = "Yes (Adaptive)" if str(doc.adaptive).lower() == "yes" else "No (Fixed Form)"
+                languages = ", ".join(doc.languages) or "Not specified"
+                desc = doc.description or "No description available."
+                table_rows.append(
+                    f"| **{name}** | {duration} | {adaptive} | {remote} | {languages} | {desc} |"
+                )
+            
+            comparison_table = (
+                "| Assessment Name | Duration | Format | Remote Support | Languages | Description |\n"
+                "| :--- | :--- | :--- | :--- | :--- | :--- |\n"
+                + "\n".join(table_rows)
+            )
+            
+            response.reply = (
+                "Here is a side-by-side comparison of the requested assessments directly from the catalog:\n\n"
+                + comparison_table
+            )
+            response.recommendations = []
             validation_result = "SHORTLIST_GROUNDED"
 
         total_latency = time.perf_counter() - start_time

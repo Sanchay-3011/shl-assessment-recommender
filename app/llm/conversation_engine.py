@@ -650,7 +650,7 @@ class ConversationEngine:
                 segments.append(parts[1])
                 segments.append(parts[2])
 
-        # Clean segments (strip leading/trailing punctuation, common starting words like "the", "a", "an")
+        # Clean segments (strip leading/trailing punctuation, common starting/ending words)
         cleaned_targets = []
         for seg in segments:
             seg_clean = seg.strip().strip("?.,!;:")
@@ -658,6 +658,10 @@ class ConversationEngine:
             words = seg_clean.split()
             if words and words[0].lower() in ["the", "a", "an"]:
                 seg_clean = " ".join(words[1:])
+            # Strip trailing "assessment", "assessments", "test", "tests", "report", "reports"
+            words = seg_clean.split()
+            if words and words[-1].lower() in ["assessment", "assessments", "test", "tests", "report", "reports"]:
+                seg_clean = " ".join(words[:-1])
             if seg_clean:
                 cleaned_targets.append(seg_clean)
 
