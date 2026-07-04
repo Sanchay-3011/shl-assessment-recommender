@@ -11,6 +11,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Pre-download the SentenceTransformer model during build so startup is instant.
+# This bakes the model weights into the image — no network download needed at runtime.
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+
 # Copy the application source code
 COPY . .
 
@@ -20,9 +24,9 @@ RUN mkdir -p indexes data
 # Expose default port (Railway overrides this with $PORT at runtime)
 EXPOSE 8000
 
-# Healthcheck — generous start-period so SentenceTransformer model has time to load
+# Healthcheck — start-period is generous as a safety net (model is already pre-loaded)
 # Uses $PORT so it works both locally (8000) and on Railway (dynamic port)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=5 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=600s --retries=5 \
     CMD python -c "import os, urllib.request; urllib.request.urlopen('http://localhost:' + os.environ.get('PORT', '8000') + '/health')" || exit 1
 
 # Shell-form CMD so Railway's $PORT variable is expanded at runtime
